@@ -1,6 +1,12 @@
-import { SignIn } from '@clerk/nextjs';
+import { SignIn } from "@clerk/nextjs";
+import type { Metadata } from "next";
 
-export default function SiginInPage() {
+// ✅ Set the browser tab title for this page
+export const metadata: Metadata = {
+  title: "CLOUD-CALL | Sign In",
+};
+
+export default function SignInPage() {
   return (
     <main className="flex h-screen w-full items-center justify-center">
       <SignIn />
