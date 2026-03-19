@@ -23,6 +23,8 @@ import Loader from './Loader';
 import EndCallButton from './EndCallButton';
 import { cn } from '@/lib/utils';
 
+import Chatbot from './Chatbot'; // remove not worked 
+
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
 
 const MeetingRoom = () => {
@@ -94,7 +96,10 @@ const MeetingRoom = () => {
             <Users size={20} className="text-white" />
           </div>
         </button>
+        <div className="flex gap-2">   
         {!isPersonalRoom && <EndCallButton />}
+        <Chatbot />
+        </div>
       </div>
     </section>
   );
