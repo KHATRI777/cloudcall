@@ -41,8 +41,11 @@ const MeetingTypeList = () => {
       const id = crypto.randomUUID();
       const call = client.call('default', id);
       if (!call) throw new Error('Failed to create meeting');
-      const startsAt =
-        values.dateTime.toISOString() || new Date(Date.now()).toISOString();
+
+      const startsAt = new Date(
+      values.dateTime.getTime() - values.dateTime.getTimezoneOffset() * 60000
+    ).toISOString();
+
       const description = values.description || 'Instant Meeting';
       await call.getOrCreate({
         data: {
