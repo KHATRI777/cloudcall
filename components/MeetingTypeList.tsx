@@ -32,39 +32,41 @@ const MeetingTypeList = () => {
   const { toast } = useToast();
 
   const createMeeting = async () => {
-  if (!client || !user) return;
-  try {
-    const id = crypto.randomUUID();
-    const call = client.call('default', id);
-    if (!call) throw new Error('Failed to create meeting');
+    if (!client || !user) return;
+    try {
+      if (!values.dateTime) {
+        toast({ title: 'Please select a date and time' });
+        return;
+      }
+      const id = crypto.randomUUID();
+      const call = client.call('default', id);
+      if (!call) throw new Error('Failed to create meeting');
 
-    const description = values.description || 'Instant Meeting';
-
-    // ✅ Prepare data
-    let data: any = { custom: { description } };
-
-    // ✅ Only set starts_at for scheduled meetings
-    if (meetingState === 'isScheduleMeeting') {
       const startsAt = new Date(
-        values.dateTime.getTime() - values.dateTime.getTimezoneOffset() * 60000
-      ).toISOString();
-      data.starts_at = startsAt;
+      values.dateTime.getTime() - values.dateTime.getTimezoneOffset() * 60000
+    ).toISOString();
+
+      const description = values.description || 'Instant Meeting';
+      await call.getOrCreate({
+        data: {
+          starts_at: startsAt,
+          custom: {
+            description,
+          },
+        },
+      });
+      setCallDetail(call);
+      if (!values.description) {
+        router.push(`/meeting/${call.id}`);
+      }
+      toast({
+        title: 'Meeting Created',
+      });
+    } catch (error) {
+      console.error(error);
+      toast({ title: 'Failed to create Meeting' });
     }
-
-    await call.getOrCreate({ data });
-    setCallDetail(call);
-
-    // ✅ Instant meeting → direct join
-    if (meetingState === 'isInstantMeeting') {
-      router.push(`/meeting/${call.id}`);
-    }
-
-    toast({ title: 'Meeting Created' });
-  } catch (error) {
-    console.error(error);
-    toast({ title: 'Failed to create Meeting' });
-  }
-};
+  };
 
   if (!client || !user) return <Loader />;
 
