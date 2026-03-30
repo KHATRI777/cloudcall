@@ -42,9 +42,8 @@ const MeetingTypeList = () => {
       const call = client.call('default', id);
       if (!call) throw new Error('Failed to create meeting');
 
-      const startsAt = new Date(
-      values.dateTime.getTime() - values.dateTime.getTimezoneOffset() * 60000
-    ).toISOString();
+      const startsAt =
+        values.dateTime.toISOString() || new Date(Date.now()).toISOString();
 
       const description = values.description || 'Instant Meeting';
       await call.getOrCreate({
